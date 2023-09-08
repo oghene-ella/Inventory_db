@@ -4,7 +4,9 @@
 
 
 -- Create all tables
--- CREATE TABLE clothingDB.clothing_item (clothing_item_id varchar(7), clothing_item_name varchar(255), clothing_item_description varchar (255), clothing_item_price integer, clothing_item_category varchar(255), clothing_item_size varchar(255), PRIMARY KEY (clothing_item_id));
+-- CREATE TABLE clothingDB.category (category_id varchar(7), category_name ENUM ("Unisex", "Male", "Female"), category_description varchar (255), category_products varchar(225), PRIMARY KEY (category_id));
+
+-- CREATE TABLE clothingDB.clothing_item (clothing_item_id varchar(7), clothing_item_name varchar(255), clothing_item_description varchar (255), clothing_item_price integer, category_id varchar(7), clothing_item_sizes ENUM ("S", "M", "L"), PRIMARY KEY (clothing_item_id));
 
 -- CREATE Table clothingDB.admin (admin_id varchar(7), admin_role ENUM ("super_admin", "content_admin"), is_active boolean, user_id varchar(7), PRIMARY KEY (admin_id), FOREIGN KEY (user_id) REFERENCES user(user_id));
 
@@ -18,7 +20,7 @@
 
 -- CREATE Table clothingDB.delivery_method (delivery_id varchar(7), is_doorstep boolean, delivery_fee integer, delivery_time timestamp, PRIMARY KEY (delivery_id));
 
--- CREATE Table clothingDB.user (user_id varchar(7), user_name varchar(255), user_role varchar(255), user_email varchar(255), PRIMARY KEY (user_id));
+-- CREATE Table clothingDB.user (user_id varchar(7), user_name varchar(255), users_role ENUM ("admin", "cashier", "customer"), user_email varchar(255), PRIMARY KEY (user_id));
 
 -- CREATE TABLE clothingDB.customer (customer_id varchar(7), customer_order_id varchar(7), user_id varchar(7), PRIMARY KEY (customer_id), FOREIGN KEY (customer_order_id) REFERENCES customer_order(customer_order_id), FOREIGN KEY (user_id) references user(user_id));
 
@@ -28,6 +30,16 @@
 
 
 -- Rename some columns
+-- Rename a column in clothing_item table
+-- ALTER TABLE clothing_item
+    -- CHANGE COLUMN clothing_item_size clothing_item_sizes  
+	 -- ENUM ("S", "M", "L");
+
+-- Rename a column in clothing_item table
+-- ALTER TABLE clothing_item
+    -- CHANGE COLUMN clothing_item_category category_id  
+	 -- varchar (7);
+
 -- Rename a column in user table
 -- ALTER TABLE user
    -- CHANGE COLUMN user_role users_role  
@@ -37,6 +49,11 @@
 -- ALTER TABLE payment_method
    -- CHANGE COLUMN is_transfer payment_method_type  
 	-- ENUM ("transfer", "cash", "debit_card");
+   
+-- Rename a column in cashier table
+-- ALTER TABLE cashier
+    -- CHANGE COLUMN cashier_status is_active
+		-- boolean   
    
 -- Rename a column in cashier_payroll table
 -- ALTER TABLE cashier_payroll
@@ -51,10 +68,18 @@
 
 -- Inserting Records for all entites (tables)
 
+-- Inserting record for category table
+-- INSERT INTO clothingDB.category VALUES ("Ml-23", "Male", "The Male Category", "Shoe");
+-- INSERT INTO clothingDB.category VALUES ("Fm-3", "Female", "The Female Category", "Sneakers");
+-- INSERT INTO clothingDB.category VALUES ("Uni-20", "Unisex", "The Uni-Sex Category", "Dress");
+-- show items in category table
+-- SELECT * FROM category ;
+
+
 -- Inserting record for clothing_item table
--- INSERT INTO clothingDB.clothing_item VALUES ("item_41", "Nike bagpack (21L)", "From workouts to getting to work, the Nike Backpack has you covered.", 2290, "Bags", "L");
--- INSERT INTO clothingDB.clothing_item VALUES ("item_36", "Nike Air Force 1 '07", "The radiance lives on in the Nike Air Force 1 '07, puts a fresh spin on what you know best.", 7450, "Shoes", "M");
--- INSERT INTO clothingDB.clothing_item VALUES ("item_09", "Nike Dri-Fit Dress", "Hit the green in a dress made to work with your every swing.", 5480, "Dress", "S");
+-- INSERT INTO clothingDB.clothing_item VALUES ("item_41", "Nike bagpack (21L)", "From workouts to getting to work, the Nike Backpack has you covered.", 2290, "Ml-23", "L");
+-- INSERT INTO clothingDB.clothing_item VALUES ("item_36", "Nike Air Force 1 '07", "The radiance lives on in the Nike Air Force 1 '07, puts a fresh spin on what you know best.", 7450, "Uni-20", "M");
+-- INSERT INTO clothingDB.clothing_item VALUES ("item_09", "Nike Dri-Fit Dress", "Hit the green in a dress made to work with your every swing.", 5480, "Fm-3", "S");
 -- show items in clothing_item table
 -- SELECT * FROM clothing_item ;
 
@@ -75,7 +100,7 @@
 -- SELECT * FROM admin ;
 
 
--- Inserting record for customer table [todo]
+-- Inserting record for customer table
 -- INSERT INTO clothingDB.customer VALUES ("cus_A01", "ord_01", 
 --  (SELECT user_id FROM user WHERE user_id="user_07")
 -- );
@@ -109,6 +134,32 @@
 --   (SELECT delivery_id FROM delivery_method WHERE delivery_id="del_A03")
 -- );
 -- SELECT * FROM customer_order;
+
+
+-- Inserting record for cashier table [come backkkk]
+-- INSERT INTO clothingDB.cashier VALUES ("cash-01", 1, "Junior",
+	-- (SELECT clothing_item_id FROM clothing_item WHERE clothing_item_id = "item_09"),
+	-- (SELECT cashier_payroll_id FROM cashier_payroll WHERE cashier_payroll_id = "cas_002"),
+	-- (SELECT customer_order_id FROM customer_order WHERE customer_order_id = "ord_02"),
+    -- (SELECT user_id FROM user WHERE user_id = "user_90")
+	-- );
+    
+-- INSERT INTO clothingDB.cashier VALUES ("cash-04", 1, "Senior",
+	-- (SELECT clothing_item_id FROM clothing_item WHERE clothing_item_id = "item_36"),
+	-- (SELECT cashier_payroll_id FROM cashier_payroll WHERE cashier_payroll_id = "cas_003"),
+	-- (SELECT customer_order_id FROM customer_order WHERE customer_order_id = "ord_03"),
+	-- (SELECT user_id FROM user WHERE user_id = "user_11")
+-- );
+
+-- INSERT INTO clothingDB.cashier VALUES ("cash-02", 0, "Junior",
+	-- (SELECT clothing_item_id FROM clothing_item WHERE clothing_item_id = "item_36"),
+	-- (SELECT cashier_payroll_id FROM cashier_payroll WHERE cashier_payroll_id = "cas_003"),
+	-- (SELECT customer_order_id FROM customer_order WHERE customer_order_id = "ord_03"),
+	-- (SELECT user_id FROM user WHERE user_id = "user_11")
+-- );
+-- show items in cashier table;
+-- SELECT * FROM cashier;
+
 
 
 -- Inserting record for cashier_payroll table
@@ -173,7 +224,9 @@
 -- INSERT INTO clothingDB.user VALUES ("user_90", "Stephen", "customer", "stephen@gmail.com");
 -- INSERT INTO clothingDB.user VALUES ("user_37", "Jerry", "cashier", "jerry@gmail.com");
 -- INSERT INTO clothingDB.user VALUES ("user_02", "banji", "cashier", "banji@gmail.com");
-INSERT INTO clothingDB.user VALUES (user02, "banji", "cashier", "banji@gmail.com");
+
+-- SELECT user_id, users_role FROM user WHERE user_id = "user_07"; [testing]
+
 
 -- show items in user table
 -- SELECT * FROM user;
